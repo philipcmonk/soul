@@ -18,4 +18,18 @@ defmodule Soul do
         Logger.error("Error: #{inspect reason}")
     end
   end
+
+  def getSpotifyName() do
+    IO.puts "go to this url:  " <> Spotify.authorize_url!
+    code = String.strip(IO.gets "code: ")
+    client = Spotify.get_token!(code: code)
+    case OAuth2.Client.get(client, "/me") do
+      {:ok, %OAuth2.Response{status_code: 401, body: _}} ->
+        Logger.error("Unauthorized token")
+      {:ok, %OAuth2.Response{status_code: status_code, body: user}} ->
+        user["display_name"]
+      {:error, %OAuth2.Error{reason: reason}} ->
+        Logger.error("Error: #{inspect reason}")
+    end
+  end
 end
