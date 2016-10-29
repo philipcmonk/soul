@@ -1,4 +1,4 @@
-defmodule Spotify do
+defmodule Strategies.Spotify do
   use OAuth2.Strategy
 
   @default_scopes "playlist-read-private playlist-read-collaborative " <>

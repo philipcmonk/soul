@@ -1,5 +1,23 @@
 # Soul
 
+## Source organization
+
+lib/
+  soul.ex
+  sources/
+    facebook.ex
+    github.ex
+    spotify.ex
+    music.ex
+    misc.ex
+    ...
+  strategies/
+    facebook.ex
+    github.ex
+    spotify.ex
+    ...
+          
+
 **TODO: Add description**
 
 ## Installation

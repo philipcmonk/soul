@@ -1,4 +1,4 @@
-defmodule Github do
+defmodule Strategies.Github do
   use OAuth2.Strategy
 
   def client do

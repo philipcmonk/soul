@@ -1,4 +1,4 @@
-defmodule Facebook do
+defmodule Strategies.Facebook do
   use OAuth2.Strategy
 
   @default_scopes "public_profile,user_friends,email,user_about_me," <>
