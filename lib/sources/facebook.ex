@@ -3,32 +3,6 @@ require Logger
 defmodule Sources.Facebook do
   alias OAuth2.Client
 
-  # here's two ways of specifying the types.  i think the struct way is
-  # better, because you're going to have to add encoders and decoders if
-  # you want to do it that way.  the question is basically whether it's
-  # worth it to dive into the weeds and normalize all the types or fly
-  # by the seat of our pants and do it all dynamically.  it's a dynamic
-  # language after all.
-  #
-  # alias OAuth2.Client
-  # @type client_t :: %OAuth2.Client{}
-
-  # defmodule CursorPage, do: defstruct [:after, :before, :previous, :next]
-  # defmodule Song, do: defstruct [:id, :title, :type, :url]
-  # defmodule Playlist, do: defstruct [:id, :title, :type, :url]
-  # defmodule SongData, do: defstruct [:song, :playlist]
-  # defmodule SongEntry, do: [:data, :end_time, :id, :start_time, :type]
-
-  # @type cursor_page :: %{cursors: %{after: String.t, before: String.t},
-  #                        previous: String.t,
-  #                        next: String.t}
-  # @type song :: %{id: String.t, title: String.t, type: String.t, url: String.t}
-  # @type playlist :: %{id: String.t, title: String.t, type: String.t,
-  #                      url: String.t}
-  # @type song_data :: %{song: song} | %{song: song, playlist: playlist}
-  # @type song_entry :: %{data: song_data, end_time: String.t, id: String.t,
-  #                    start_time: String.t, type: String.t}
-
   def getName(client) do
     case Client.get(client, "/me") do
       {:ok, %OAuth2.Response{status_code: 401, body: _}} ->
@@ -76,13 +50,4 @@ defmodule Sources.Facebook do
       fn(cursor) -> cursor end
     )
   end
-
-  # defp getMusicListensPage(client, count) do
-  #   case Client.get(client, "/me/music.listens") do
-  #     {:ok, %OAuth2.Response{body: body}} ->
-  #       body
-  #     {:error, %OAuth2.Error{reason: reason}} ->
-  #       Logger.error("Error: #{inspect reason}")
-  #   end
-  # end
 end
