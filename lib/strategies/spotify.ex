@@ -9,8 +9,8 @@ defmodule Strategies.Spotify do
   def client do
     OAuth2.Client.new([
       strategy: __MODULE__,
-      client_id: System.get_env("SPOTIFY_CLIENT_ID"),
-      client_secret: System.get_env("SPOTIFY_CLIENT_SECRET"),
+      client_id: Application.get_env(:soul, :spotify_client_id),
+      client_secret: Application.get_env(:soul, :spotify_client_secret),
       redirect_uri: "http://dev.pcmonk.me:4000",
       site: "https://api.spotify.com/v1",
       authorize_url: "https://accounts.spotify.com/authorize",

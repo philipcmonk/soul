@@ -16,11 +16,11 @@ defmodule Sources.Facebook do
 
 	def getTestClient() do
     %OAuth2.Client{authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
-     client_id: System.get_env("FACEBOOK_CLIENT_ID"),
-     client_secret: System.get_env("FACEBOOK_CLIENT_SECRET"), headers: [], params: %{},
+     client_id: Application.get_env(:soul, :facebook_client_id),
+     client_secret: Application.get_env(:soul, :facebook_client_secret), headers: [], params: %{},
      redirect_uri: "http://dev.pcmonk.me:4000/",
      site: "https://graph.facebook.com/v2.5", strategy: Strategies.Facebook,
-     token: %OAuth2.AccessToken{access_token: System.get_env("FACEBOOK_TEST_ACCESS_TOKEN"),
+     token: %OAuth2.AccessToken{access_token: Application.get_env(:soul, :facebook_test_access_token),
       expires_at: 1482823240, other_params: %{}, refresh_token: nil,
       token_type: "Bearer"}, token_method: :post,
      token_url: "https://graph.facebook.com/v2.8/oauth/access_token"}

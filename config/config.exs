@@ -1,28 +1,30 @@
 # This file is responsible for configuring your application
 # and its dependencies with the aid of the Mix.Config module.
+#
+# This configuration file is loaded before any dependency and
+# is restricted to this project.
 use Mix.Config
 
-# This configuration is loaded before any dependency and is restricted
-# to this project. If another project depends on this project, this
-# file won't be loaded nor affect the parent project. For this reason,
-# if you want to provide default values for your application for third-
-# party users, it should be done in your mix.exs file.
+# General application configuration
+config :soul,
+  ecto_repos: [Soul.Repo]
 
-# Sample configuration:
-#
-#     config :logger,
-#       level: :info
-#
-#     config :logger, :console,
-#       format: "$date $time [$level] $metadata$message\n",
-#       metadata: [:user_id]
+# Configures the endpoint
+config :soul, Soul.Endpoint,
+  url: [host: "localhost"],
+  secret_key_base: "Udue785dOpTJQtxkXripYHfcEJJSWy3CMrBN7poWhtmEAgrPWb/QS3tzItj6vm/K",
+  render_errors: [view: Soul.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: Soul.PubSub,
+           adapter: Phoenix.PubSub.PG2]
 
-# It is also possible to import configuration files, relative to this
-# directory. For example, you can emulate configuration per environment
-# by uncommenting the line below and defining dev.exs, test.exs and such.
-# Configuration from the imported file will override the ones defined
-# here (which is why it is important to import them last).
-#
-#     import_config "#{Mix.env}.exs"
+# Configures Elixir's Logger
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
 
-config :oauth2, debug: true
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{Mix.env}.exs"
+
+# Import application ids/secrets
+import_config "services.exs"

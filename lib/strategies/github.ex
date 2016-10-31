@@ -4,8 +4,8 @@ defmodule Strategies.Github do
   def client do
     OAuth2.Client.new([
       strategy: __MODULE__,
-      client_id: System.get_env("GITHUB_CLIENT_ID"),
-      client_secret: System.get_env("GITHUB_CLIENT_SECRET"),
+      client_id: Application.get_env(:soul, :github_client_id),
+      client_secret: Application.get_env(:soul, :github_client_secret),
       redirect_uri: "http://dev.pcmonk.me:4000",
       site: "https://api.github.com",
       authorize_url: "https://github.com/login/oauth/authorize",

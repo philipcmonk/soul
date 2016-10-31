@@ -19,8 +19,8 @@ defmodule Strategies.Facebook do
   def client do
     OAuth2.Client.new([
       strategy: __MODULE__,
-      client_id: System.get_env("FACEBOOK_CLIENT_ID"),
-      client_secret: System.get_env("FACEBOOK_CLIENT_SECRET"),
+      client_id: Application.get_env(:soul, :facebook_client_id),
+      client_secret: Application.get_env(:soul, :facebook_client_secret),
       redirect_uri: "http://dev.pcmonk.me:4000/",
       site: "https://graph.facebook.com/v2.5",
       authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
