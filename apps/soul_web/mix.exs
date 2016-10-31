@@ -23,7 +23,7 @@ defmodule SoulWeb.Mixfile do
   def application do
     [mod: {SoulWeb, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger,
-                    :gettext, :phoenix_ecto, :postgrex, :soul_gut]]
+                    :gettext, :phoenix_ecto, :postgrex, :soul_gut, :timex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -42,7 +42,8 @@ defmodule SoulWeb.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:soul_gut, in_umbrella: true}
+     {:soul_gut, in_umbrella: true},
+     {:timex, "~> 3.0"}
    ]
   end
 

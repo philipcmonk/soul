@@ -25,5 +25,6 @@ defmodule SoulWeb.Router do
 
     get "/", ApiController, :index
     get "/music", ApiController, :music
+    get "/music/:time", ApiController, :music_at
   end
 end

@@ -50,4 +50,41 @@ defmodule Sources.Facebook do
       fn(cursor) -> cursor end
     )
   end
+
+  @doc """
+  Gets the most recently played song previous to a time.  If the given time
+  is in the middle of us playing a song, we tag the result with `:during`, else
+  we tag it with `:after`.  If the time is before we played any song, we produce
+  nil.
+
+  TODO: traverse pagination
+  """
+  def getSongAtTime(client, t) do
+    maybe_song =
+      streamEndpoint(client, "/me/music.listens")
+      |> Stream.filter(&isSong?(&1, t))
+      |> Enum.take(1)
+    case maybe_song do
+      nil -> nil
+      [song] ->
+        ending = Timex.parse!(song["end_time"], "{ISO:Extended}")
+        {if(Timex.before?(ending, t), do: :after, else: :during),
+            song["data"]["song"]["title"],
+            getPlaylist(song["data"])}
+    end
+  end
+
+  defp isSong?(song, t) do
+    starting = Timex.parse!(song["start_time"], "{ISO:Extended}")
+    Timex.before?(starting, t)
+  end
+
+  defp getPlaylist(data) do
+    Logger.debug(inspect(data))
+    if Map.has_key?(data, "playlist") do
+      data["playlist"]["title"]
+    else
+      nil
+    end
+  end
 end

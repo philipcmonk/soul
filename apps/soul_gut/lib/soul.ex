@@ -3,7 +3,7 @@ require Logger
 defmodule SoulGut do
   use Application
 
-  def start(_type, args) do
+  def start(_type, _args) do
     Logger.debug("starting soul_gut")
     Task.start(fn -> :timer.sleep(1000); IO.puts("done!") end)
   end

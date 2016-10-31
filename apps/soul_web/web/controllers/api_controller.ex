@@ -14,4 +14,12 @@ defmodule SoulWeb.ApiController do
     Logger.debug("music1 " <> inspect(s))
     json conn, Enum.take(s, 5)
   end
+
+  def music_at(conn, %{"time" => time}) do
+    client = Sources.Facebook.getTestClient
+    t = Timex.parse!(time, "{ISO:Extended}")
+    {during, song, playlist} =
+      Sources.Facebook.getSongAtTime(client, t)
+    json conn, %{when: during, song: song, playlist: playlist}
+  end
 end

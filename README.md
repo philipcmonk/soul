@@ -9,4 +9,5 @@ in `apps/soul_gut/README.md`.
 ## Running
 
 Use `mix phoenix.server` and visit `localhost:4000`.  The most interesting
-endpoint currently is `/api/music`.
+endpoints currently are `/api/music` and `/api/music/{iso-date}` (e.g.
+`/api/music/2016-10-31T08:35:34.894Z`).
