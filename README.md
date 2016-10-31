@@ -1,48 +1,12 @@
 # Soul
 
-## Configuration
+This is the umbrella app for Soul.  SoulWeb is a web server, and SoulGut talks
+to various APIs.
 
-You'll need a `config/services.ex` that looks like this (fill in the app ids
-and secrets from your own app that you create).
+To use the APIs, you'll need a `apps/soul_gut/config/services.ex`, as described
+in `apps/soul_gut/README.md`.
 
-    use Mix.Config
-    
-    config :soul,
-      github_client_id: "XXX",
-      github_client_secret: "XXX",
-      spotify_client_id: "XXX",
-      spotify_client_secret: "XXX",
-      facebook_client_id: "XXX",
-      facebook_client_secret: "XXX",
-      facebook_test_access_token: "XXX"
+## Running
 
-## Source organization
-
-    lib/
-      soul.ex
-      sources/
-        facebook.ex
-        github.ex
-        spotify.ex
-        music.ex
-        misc.ex
-        ...
-      strategies/
-        facebook.ex
-        github.ex
-        spotify.ex
-        ...
-          
-## Installation
-
-  1. Add soul to your list of dependencies in mix.exs:
-
-        def deps do
-          [{:soul, "~> 0.0.1"}]
-        end
-
-  2. Ensure soul is started before your application:
-
-        def application do
-          [applications: [:soul]]
-        end
+Use `mix phoenix.server` and visit `localhost:4000`.  The most interesting
+endpoint currently is `/api/music`.
