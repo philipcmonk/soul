@@ -19,13 +19,16 @@ defmodule SoulGut.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {SoulGut, []},
-     applications: [:logger, :oauth2, :timex]]
+     applications: [:logger, :oauth2, :ecto, :postgrex, :timex, :timex_ecto]]
   end
 
   defp deps do
     [{:oauth2, "~> 0.8"},
      {:poison, "~> 2.0"},
-     {:timex, "~> 3.0"}
+     {:ecto, "~> 2.0"},
+     {:postgrex, ">= 0.0.0"},
+     {:timex, "~> 3.0"},
+     {:timex_ecto, "~> 3.0"}
     ]
   end
 end

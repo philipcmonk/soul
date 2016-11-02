@@ -15,17 +15,51 @@ defmodule Sources.Facebook do
   end
 
 	def getTestClient() do
+    getClient(Application.get_env(:soul_gut, :facebook_client_id),
+              Application.get_env(:soul_gut, :facebook_client_secret),
+              Application.get_env(:soul_gut, :facebook_test_access_token))
+	end
+
+  def setTestClient() do
+    alias SoulGut.{Repo,Service}
+
+    changeset = Service.changeset(%Service{},
+      %{name: "facebook",
+        client_id: Application.get_env(:soul_gut, :facebook_client_id),
+        client_secret: Application.get_env(:soul_gut, :facebook_client_secret),
+        access_token: Application.get_env(:soul_gut, :facebook_test_access_token)
+      })
+
+    case Repo.insert(changeset) do
+      {:ok, _model} -> "great!"
+      {:error, _changeset} -> Logger.error("couldn't set test client")
+    end
+  end
+
+  def getClient(id, secret, token) do
     %OAuth2.Client{authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
-     client_id: Application.get_env(:soul_gut, :facebook_client_id),
-     client_secret: Application.get_env(:soul_gut, :facebook_client_secret), headers: [], params: %{},
+     client_id: id,
+     client_secret: secret, headers: [], params: %{},
      redirect_uri: "http://dev.pcmonk.me:4000/",
      site: "https://graph.facebook.com/v2.5", strategy: Strategies.Facebook,
-     token: %OAuth2.AccessToken{access_token: Application.get_env(:soul_gut, :facebook_test_access_token),
+     token: %OAuth2.AccessToken{access_token: token,
       expires_at: 1482823240, other_params: %{}, refresh_token: nil,
       token_type: "Bearer"}, token_method: :post,
      token_url: "https://graph.facebook.com/v2.8/oauth/access_token"}
+  end
 
-	end
+  def getClient() do
+    import Ecto.Query, only: [from: 2]
+    alias SoulGut.{Repo,Service}
+
+    query = from s in Service,
+      where: s.name == "facebook",
+      select: {s.client_id, s.client_secret, s.access_token}
+
+    {id, secret, token} = Repo.one!(query)
+
+    getClient(id, secret, token)
+  end
 
   def streamEndpoint(client, endpoint) do
     Stream.resource(

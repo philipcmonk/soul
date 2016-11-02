@@ -4,8 +4,14 @@ defmodule SoulGut do
   use Application
 
   def start(_type, _args) do
-    Logger.debug("starting soul_gut")
-    Task.start(fn -> :timer.sleep(1000); IO.puts("done!") end)
+    import Supervisor.Spec, warn: false
+
+    children = [
+      supervisor(SoulGut.Repo, [])
+    ]
+
+    opts = [strategy: :one_for_one, name: SoulGut.Supervisor]
+    Supervisor.start_link(children, opts)
   end
 
   def add(x, y) do

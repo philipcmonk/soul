@@ -24,6 +24,7 @@ defmodule SoulWeb.Router do
     pipe_through :api
 
     get "/", ApiController, :index
+    get "/services", ApiController, :services
     get "/music", ApiController, :music
     get "/music/:time", ApiController, :music_at
   end
