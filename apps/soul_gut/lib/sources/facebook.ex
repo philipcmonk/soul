@@ -99,6 +99,20 @@ defmodule Sources.Facebook do
     )
   end
 
+  def getEndpoint(client, endpoint) do
+    case Client.get(client, "/" <> Enum.join(endpoint, "/")) do
+      {:ok, %OAuth2.Response{status_code: _status_code, body: body}} ->
+        body["data"]
+      {:error, %OAuth2.Error{reason: reason}} ->
+        Logger.debug("endpoint error " <> inspect(reason))
+        %{error: inspect(reason)}
+    end
+  end
+
+  def getEndpoint(endpoint) do
+    getEndpoint(getClient(), endpoint)
+  end
+
   @doc """
   Gets the most recently played song previous to a time.  If the given time
   is in the middle of us playing a song, we tag the result with `:during`, else

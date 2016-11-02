@@ -33,4 +33,8 @@ defmodule SoulWeb.ApiController do
       |> Enum.map(fn {service, module} -> {service, module.hasClient?} end)
       |> Map.new
   end
+
+  def facebook(conn, %{"endpoint" => endpoint}) do
+    json conn, Sources.Facebook.getEndpoint(endpoint)
+  end
 end
