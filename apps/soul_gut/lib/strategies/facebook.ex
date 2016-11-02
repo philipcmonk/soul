@@ -21,7 +21,7 @@ defmodule Strategies.Facebook do
       strategy: __MODULE__,
       client_id: Application.get_env(:soul_gut, :facebook_client_id),
       client_secret: Application.get_env(:soul_gut, :facebook_client_secret),
-      redirect_uri: "http://dev.pcmonk.me:4000/",
+      redirect_uri: Application.get_env(:soul_gut, :authorize_redirect_uri),
       site: "https://graph.facebook.com/v2.5",
       authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
       token_url: "https://graph.facebook.com/v2.8/oauth/access_token"

@@ -6,7 +6,7 @@ You'll need a `config/services.ex` that looks like this (fill in the app ids
 and secrets from your own app that you create).
 
     use Mix.Config
-    
+
     config :soul,
       github_client_id: "XXX",
       github_client_secret: "XXX",
@@ -14,7 +14,8 @@ and secrets from your own app that you create).
       spotify_client_secret: "XXX",
       facebook_client_id: "XXX",
       facebook_client_secret: "XXX",
-      facebook_test_access_token: "XXX"
+      facebook_test_access_token: "XXX",
+      authorize_redirect_uri: "http://<domain>:<port>"
 
 ## Source organization
 
@@ -32,7 +33,7 @@ and secrets from your own app that you create).
         github.ex
         spotify.ex
         ...
-          
+
 ## Installation
 
   1. Add soul to your list of dependencies in mix.exs:

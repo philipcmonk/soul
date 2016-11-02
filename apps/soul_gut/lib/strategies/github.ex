@@ -6,7 +6,7 @@ defmodule Strategies.Github do
       strategy: __MODULE__,
       client_id: Application.get_env(:soul_gut, :github_client_id),
       client_secret: Application.get_env(:soul_gut, :github_client_secret),
-      redirect_uri: "http://dev.pcmonk.me:4000",
+      redirect_uri: Application.get_env(:soul_gut, :authorize_redirect_uri),
       site: "https://api.github.com",
       authorize_url: "https://github.com/login/oauth/authorize",
       token_url: "https://github.com/login/oauth/access_token"

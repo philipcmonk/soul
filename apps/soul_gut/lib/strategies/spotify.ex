@@ -11,7 +11,7 @@ defmodule Strategies.Spotify do
       strategy: __MODULE__,
       client_id: Application.get_env(:soul_gut, :spotify_client_id),
       client_secret: Application.get_env(:soul_gut, :spotify_client_secret),
-      redirect_uri: "http://dev.pcmonk.me:4000",
+      redirect_uri: Application.get_env(:soul_gut, :authorize_redirect_uri),
       site: "https://api.spotify.com/v1",
       authorize_url: "https://accounts.spotify.com/authorize",
       token_url: "https://accounts.spotify.com/api/token"
