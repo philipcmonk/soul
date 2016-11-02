@@ -24,14 +24,13 @@ defmodule SoulWeb.ApiController do
   end
 
   def services(conn, _params) do
-    services = MapSet.new([
-                            :facebook,
-                            :spotify,
-                            :github
-                          ])
+    services = %{facebook: Sources.Facebook,
+                 spotify:  Sources.Spotify,
+                 github:   Sources.Github
+               }
     json conn,
       services
-      |> Enum.map(fn s -> {s, false} end)
+      |> Enum.map(fn {service, module} -> {service, module.hasClient?} end)
       |> Map.new
   end
 end

@@ -1,4 +1,7 @@
 require Logger
+import Ecto.Query, only: [from: 2]
+alias SoulGut.{Repo,Service}
+
 
 defmodule Sources.Facebook do
   alias OAuth2.Client
@@ -21,8 +24,6 @@ defmodule Sources.Facebook do
 	end
 
   def setTestClient() do
-    alias SoulGut.{Repo,Service}
-
     changeset = Service.changeset(%Service{},
       %{name: "facebook",
         client_id: Application.get_env(:soul_gut, :facebook_client_id),
@@ -34,6 +35,11 @@ defmodule Sources.Facebook do
       {:ok, _model} -> "great!"
       {:error, _changeset} -> Logger.error("couldn't set test client")
     end
+  end
+
+  def delClient() do
+    from(s in Service, where: s.name == "facebook")
+    |> Repo.delete_all
   end
 
   def getClient(id, secret, token) do
@@ -49,9 +55,6 @@ defmodule Sources.Facebook do
   end
 
   def getClient() do
-    import Ecto.Query, only: [from: 2]
-    alias SoulGut.{Repo,Service}
-
     query = from s in Service,
       where: s.name == "facebook",
       select: {s.client_id, s.client_secret, s.access_token}
@@ -59,6 +62,17 @@ defmodule Sources.Facebook do
     {id, secret, token} = Repo.one!(query)
 
     getClient(id, secret, token)
+  end
+
+  def hasClient?() do
+    query = from s in Service,
+      where: s.name == "facebook",
+      select: s.access_token
+
+    case Repo.one(query) do
+      nil -> false # either no facebook row or access token doesn't exist
+      _token -> true
+    end
   end
 
   def streamEndpoint(client, endpoint) do
