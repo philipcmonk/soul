@@ -22,4 +22,10 @@ defmodule SoulGut.Service do
     |> cast(params, @required_fields, @optional_fields)
     |> unique_constraint(:name)
   end
+
+  def update_changeset(service, params \\ :empty) do
+    service
+    |> cast(params, [:id], @required_fields ++ @optional_fields)
+    |> unique_constraint(:name)
+  end
 end

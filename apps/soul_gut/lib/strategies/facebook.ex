@@ -1,3 +1,7 @@
+require Logger
+import Ecto.Query, only: [from: 2]
+alias SoulGut.{Repo,Service}
+
 defmodule Strategies.Facebook do
   use OAuth2.Strategy
 
@@ -16,18 +20,98 @@ defmodule Strategies.Facebook do
     "pages_messaging_phone_number"
 
 
-  def client do
-    OAuth2.Client.new([
-      strategy: __MODULE__,
-      client_id: Application.get_env(:soul_gut, :facebook_client_id),
-      client_secret: Application.get_env(:soul_gut, :facebook_client_secret),
-      redirect_uri: Application.get_env(:soul_gut, :authorize_redirect_uri),
-      site: "https://graph.facebook.com/v2.8",
-      authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
-      token_url: "https://graph.facebook.com/v2.8/oauth/access_token"
-    ])
+  def makeClient(id, secret, token) do
+    %OAuth2.Client{authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
+     client_id: id,
+     client_secret: secret, headers: [], params: %{},
+     redirect_uri: "http://dev.pcmonk.me:4000/",
+     site: "https://graph.facebook.com/v2.5", strategy: Strategies.Facebook,
+     token: %OAuth2.AccessToken{access_token: token,
+      expires_at: 1482823240, other_params: %{}, refresh_token: nil,
+      token_type: "Bearer"}, token_method: :post,
+     token_url: "https://graph.facebook.com/v2.8/oauth/access_token"}
   end
 
+  def client do
+    query = from s in Service,
+      where: s.name == "facebook",
+      select: {s.client_id, s.client_secret, s.access_token}
+
+    {id, secret, token} = Repo.one!(query)
+
+    makeClient(id, secret, token)
+  end
+
+  def hasClient?() do
+    query = from s in Service,
+      where: s.name == "facebook",
+      where: not is_nil(s.access_token),
+      select: s.id
+
+    case Repo.one(query) do
+      nil -> false # either no facebook row or access token doesn't exist
+      id -> id
+    end
+  end
+
+  def setTestClient() do
+    setClient(Application.get_env(:soul_gut, :facebook_client_id),
+      Application.get_env(:soul_gut, :facebook_client_secret),
+      Application.get_env(:soul_gut, :facebook_test_access_token))
+  end
+
+  def setClient(client) do
+    setClient(client.client_id, client.client_secret, client.token.access_token)
+  end
+
+  def setClient(id, secret, token) do
+    case hasClient?() do
+      false ->
+        changeset = Service.changeset(%Service{},
+          %{name: "facebook",
+            client_id: id,
+            client_secret: secret,
+            access_token: token
+          })
+        case Repo.insert(changeset) do
+          {:ok, _model} -> {:ok, "great new one!"}
+          {:error, changeset} ->
+            Logger.error("couldn't set new client.  " <> inspect(changeset))
+            {:error, "couldn't set new client.  " <> inspect(changeset)}
+        end
+
+      key ->
+        changeset = Service.update_changeset(%Service{id: key},
+          %{name: "facebook",
+            client_id: id,
+            client_secret: secret,
+            access_token: token
+          })
+        Logger.debug("changeset " <> inspect(changeset))
+        case Repo.update(changeset) do
+          {:ok, _model} -> {:ok, "great old one!"}
+          {:error, changeset} ->
+            Logger.error("couldn't set old client.  " <> inspect(changeset))
+            {:error, "couldn't set old client.  " <> inspect(changeset)}
+        end
+    end
+  end
+
+  def delClient() do
+    from(s in Service, where: s.name == "facebook")
+    |> Repo.delete_all
+  end
+
+  def takeCode(code) do
+    Logger.debug("hrm")
+    c = Strategies.Facebook.get_token!(code: code)
+    Logger.debug("taking code" <> inspect(c))
+    Logger.debug("harm")
+    setClient(c)
+  end
+
+
+  # These are the ones you need!
   def authorize_url! do
     OAuth2.Client.authorize_url!(client(), scope: @default_scopes)
   end

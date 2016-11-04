@@ -77,7 +77,7 @@ defmodule SoulGut do
   we tag it with `:after`.  If the time is before we played any song, we produce
   nil.
 
-  TODO: traverse pagination
+  XXX: deprecated by Sources.Facebook.getSongAtTime
   """
   @spec getSongAtTime(%OAuth2.Client{}, %DateTime{}) ::
       {:during, String.t, String.t | nil} |

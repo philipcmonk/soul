@@ -18,6 +18,10 @@ defmodule Strategies.Spotify do
     ])
   end
 
+  def hasClient?() do
+    false
+  end
+
   def authorize_url! do
     OAuth2.Client.authorize_url!(client(), scope: @default_scopes)
   end
