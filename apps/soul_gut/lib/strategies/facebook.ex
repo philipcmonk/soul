@@ -1,10 +1,16 @@
 require Logger
-import Ecto.Query, only: [from: 2]
-alias SoulGut.{Repo,Service}
 
 defmodule Strategies.Facebook do
   use OAuth2.Strategy
 
+  @service "facebook"
+  @bare_client %OAuth2.Client{
+                 authorize_url: "/dialog/oauth",
+                 redirect_uri: "http://dev.pcmonk.me:4000/",
+                 site: "https://graph.facebook.com/v2.8",
+                 strategy: Strategies.Facebook,
+                 token_url: "/oauth/access_token"
+               }
   @default_scopes "public_profile,user_friends,email,user_about_me," <>
     "user_actions.books,user_actions.fitness,user_actions.music," <>
     "user_actions.news,user_actions.video," <> # user_actions:{app_namespace}," <>
@@ -20,94 +26,24 @@ defmodule Strategies.Facebook do
     "pages_messaging_phone_number"
 
 
-  def make_client(id, secret, token) do
-    %OAuth2.Client{authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
-     client_id: id,
-     client_secret: secret, headers: [], params: %{},
-     redirect_uri: "http://dev.pcmonk.me:4000/",
-     site: "https://graph.facebook.com/v2.5", strategy: Strategies.Facebook,
-     token: %OAuth2.AccessToken{access_token: token,
-      expires_at: 1482823240, other_params: %{}, refresh_token: nil,
-      token_type: "Bearer"}, token_method: :post,
-     token_url: "https://graph.facebook.com/v2.8/oauth/access_token"}
+  def client, do: Strategies.client(@service, @bare_client)
+  def has_client, do: @service |> Strategies.has_client?
+  def del_client, do: @service |> Strategies.del_client
+  def set_client(client), do: @service |> Strategies.set_client(client)
+  def set_client(id, secret, token) do
+    @service |> Strategies.set_client(id, secret, token)
   end
 
-  def client do
-    query = from s in Service,
-      where: s.name == "facebook",
-      select: {s.client_id, s.client_secret, s.access_token}
-
-    {id, secret, token} = Repo.one!(query)
-
-    make_client(id, secret, token)
-  end
-
-  def has_client?() do
-    query = from s in Service,
-      where: s.name == "facebook",
-      where: not is_nil(s.access_token),
-      select: s.id
-
-    case Repo.one(query) do
-      nil -> false # either no facebook row or access token doesn't exist
-      id -> id
-    end
+  def take_code(code) do
+    [code: code]
+    |> Strategies.Facebook.get_token!
+    |> set_client
   end
 
   def set_test_client() do
     set_client(Application.get_env(:soul_gut, :facebook_client_id),
       Application.get_env(:soul_gut, :facebook_client_secret),
       Application.get_env(:soul_gut, :facebook_test_access_token))
-  end
-
-  def set_client(client) do
-    set_client(client.client_id, client.client_secret, client.token.access_token)
-  end
-
-  def set_client(id, secret, token) do
-    case has_client?() do
-      false ->
-        changeset = Service.changeset(%Service{},
-          %{name: "facebook",
-            client_id: id,
-            client_secret: secret,
-            access_token: token
-          })
-        case Repo.insert(changeset) do
-          {:ok, _model} -> {:ok, "great new one!"}
-          {:error, changeset} ->
-            Logger.error("couldn't set new client.  " <> inspect(changeset))
-            {:error, "couldn't set new client.  " <> inspect(changeset)}
-        end
-
-      key ->
-        changeset = Service.update_changeset(%Service{id: key},
-          %{name: "facebook",
-            client_id: id,
-            client_secret: secret,
-            access_token: token
-          })
-        Logger.debug("changeset " <> inspect(changeset))
-        case Repo.update(changeset) do
-          {:ok, _model} -> {:ok, "great old one!"}
-          {:error, changeset} ->
-            Logger.error("couldn't set old client.  " <> inspect(changeset))
-            {:error, "couldn't set old client.  " <> inspect(changeset)}
-        end
-    end
-  end
-
-  def del_client() do
-    from(s in Service, where: s.name == "facebook")
-    |> Repo.delete_all
-  end
-
-  def take_code(code) do
-    Logger.debug("hrm")
-    c = Strategies.Facebook.get_token!(code: code)
-    Logger.debug("taking code" <> inspect(c))
-    Logger.debug("harm")
-    set_client(c)
   end
 
 
