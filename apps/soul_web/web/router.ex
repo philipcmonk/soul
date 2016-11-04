@@ -26,6 +26,7 @@ defmodule SoulWeb.Router do
     get "/", ApiController, :index
     get "/services", ApiController, :services
     get "/services/:service/auth", ApiController, :auth
+    get "/services/:service/auth_url", ApiController, :auth_url
     get "/facebook/*endpoint", ApiController, :facebook
     get "/music", ApiController, :music
     get "/music/:time", ApiController, :music_at

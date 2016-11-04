@@ -45,6 +45,15 @@ defmodule SoulWeb.ApiController do
     |> (&json(conn, &1)).()
   end
 
+  def auth_url(conn, %{"service" => service}) do
+    unless Map.has_key?(@services, service) do
+      %{ok: false, error: "service not recognized"}
+    else
+      @services[service].authorize_url!
+    end
+    |> (&json(conn, &1)).()
+  end
+
   def facebook(conn, %{"endpoint" => endpoint}) do
     json conn, Sources.Facebook.getEndpoint(endpoint)
   end
