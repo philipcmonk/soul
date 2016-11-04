@@ -18,7 +18,7 @@ defmodule SoulGut do
     x + y + y
   end
 
-  def getGithubUsername() do
+  def get_github_username() do
     IO.puts "go to this url:  " <> Strategies.Github.authorize_url!
     code = String.strip(IO.gets "code: ")
     client = Strategies.Github.get_token!(code: code)
@@ -32,7 +32,7 @@ defmodule SoulGut do
     end
   end
 
-  def getSpotifyName() do
+  def get_spotify_name() do
     IO.puts "go to this url:  " <> Strategies.Spotify.authorize_url!
     code = String.strip(IO.gets "code: ")
     client = Strategies.Spotify.get_token!(code: code)
@@ -46,7 +46,7 @@ defmodule SoulGut do
     end
   end
 
-  def getFacebookName() do
+  def get_facebook_name() do
     IO.puts "go to this url:  " <> Strategies.Facebook.authorize_url!
     code = String.strip(IO.gets "code: ")
     client = Strategies.Facebook.get_token!(code: code)
@@ -60,7 +60,7 @@ defmodule SoulGut do
     end
   end
 
-  def startFacebook() do
+  def start_facebook() do
     IO.puts "go to this url:  " <> Strategies.Facebook.authorize_url!
     code = String.strip(IO.gets "code: ")
     client = Strategies.Facebook.get_token!(code: code)
@@ -77,17 +77,17 @@ defmodule SoulGut do
   we tag it with `:after`.  If the time is before we played any song, we produce
   nil.
 
-  XXX: deprecated by Sources.Facebook.getSongAtTime
+  XXX: deprecated by Sources.Facebook.get_song_at_time
   """
-  @spec getSongAtTime(%OAuth2.Client{}, %DateTime{}) ::
+  @spec get_song_at_time(%OAuth2.Client{}, %DateTime{}) ::
       {:during, String.t, String.t | nil} |
       {:after, String.t, String.t | nil} |
       {:error, any} |
       nil
-  def getSongAtTime(client, t) do
+  def get_song_at_time(client, t) do
     case OAuth2.Client.get(client, "/me/music.listens") do
       {:ok, %OAuth2.Response{body: body}} ->
-        findSong(body["data"], t)
+        find_song(body["data"], t)
       {:error, %OAuth2.Error{reason: reason}} ->
         Logger.error("Error: #{inspect reason}")
     end
@@ -100,12 +100,12 @@ defmodule SoulGut do
   @type song_entry :: %{data: song_data, end_time: String.t, id: String.t,
                      start_time: String.t, type: String.t}
 
-  @spec findSong([song_entry], %DateTime{}) ::
+  @spec find_song([song_entry], %DateTime{}) ::
       {:during, String.t, String.t | nil} |
       {:after, String.t, String.t | nil} |
       nil
-  defp findSong([], _), do: nil
-  defp findSong([entry | entries], t) do
+  defp find_song([], _), do: nil
+  defp find_song([entry | entries], t) do
     starting = Timex.parse!(entry["start_time"], "{ISO:Extended}")
     ending = Timex.parse!(entry["end_time"], "{ISO:Extended}")
     Logger.debug(inspect(entry))
@@ -113,16 +113,16 @@ defmodule SoulGut do
     Logger.debug(inspect(starting))
     cond do
       Timex.before?(ending, t) ->
-        {:after, entry["data"]["song"]["title"], getPlaylist(entry["data"])}
+        {:after, entry["data"]["song"]["title"], get_playlist(entry["data"])}
       Timex.before?(starting, t) ->
-        {:during, entry["data"]["song"]["title"], getPlaylist(entry["data"])}
+        {:during, entry["data"]["song"]["title"], get_playlist(entry["data"])}
       true ->
-        findSong(entries, t)
+        find_song(entries, t)
     end
   end
 
-  @spec getPlaylist(song_data) :: String.t | nil
-  defp getPlaylist(data) do
+  @spec get_playlist(song_data) :: String.t | nil
+  defp get_playlist(data) do
     if Map.has_key?(data, "playlist") do
       data["playlist"]["title"]
     else

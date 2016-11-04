@@ -20,7 +20,7 @@ defmodule Strategies.Facebook do
     "pages_messaging_phone_number"
 
 
-  def makeClient(id, secret, token) do
+  def make_client(id, secret, token) do
     %OAuth2.Client{authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
      client_id: id,
      client_secret: secret, headers: [], params: %{},
@@ -39,10 +39,10 @@ defmodule Strategies.Facebook do
 
     {id, secret, token} = Repo.one!(query)
 
-    makeClient(id, secret, token)
+    make_client(id, secret, token)
   end
 
-  def hasClient?() do
+  def has_client?() do
     query = from s in Service,
       where: s.name == "facebook",
       where: not is_nil(s.access_token),
@@ -54,18 +54,18 @@ defmodule Strategies.Facebook do
     end
   end
 
-  def setTestClient() do
-    setClient(Application.get_env(:soul_gut, :facebook_client_id),
+  def set_test_client() do
+    set_client(Application.get_env(:soul_gut, :facebook_client_id),
       Application.get_env(:soul_gut, :facebook_client_secret),
       Application.get_env(:soul_gut, :facebook_test_access_token))
   end
 
-  def setClient(client) do
-    setClient(client.client_id, client.client_secret, client.token.access_token)
+  def set_client(client) do
+    set_client(client.client_id, client.client_secret, client.token.access_token)
   end
 
-  def setClient(id, secret, token) do
-    case hasClient?() do
+  def set_client(id, secret, token) do
+    case has_client?() do
       false ->
         changeset = Service.changeset(%Service{},
           %{name: "facebook",
@@ -97,17 +97,17 @@ defmodule Strategies.Facebook do
     end
   end
 
-  def delClient() do
+  def del_client() do
     from(s in Service, where: s.name == "facebook")
     |> Repo.delete_all
   end
 
-  def takeCode(code) do
+  def take_code(code) do
     Logger.debug("hrm")
     c = Strategies.Facebook.get_token!(code: code)
     Logger.debug("taking code" <> inspect(c))
     Logger.debug("harm")
-    setClient(c)
+    set_client(c)
   end
 
 

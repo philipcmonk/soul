@@ -13,7 +13,7 @@ defmodule Strategies.Github do
     ])
   end
 
-  def hasClient?() do
+  def has_client?() do
     false
   end
 

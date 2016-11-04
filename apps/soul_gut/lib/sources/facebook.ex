@@ -4,7 +4,7 @@ alias Strategies.Facebook, as: Fb
 defmodule Sources.Facebook do
   alias OAuth2.Client
 
-  def getName() do
+  def get_name() do
     case Client.get(Fb.client, "/me") do
       {:ok, %OAuth2.Response{status_code: 401, body: _}} ->
         Logger.error("Unauthorized token")
@@ -15,13 +15,13 @@ defmodule Sources.Facebook do
     end
   end
 
-  # def getTestClient() do
-  #   getClient(Application.get_env(:soul_gut, :facebook_client_id),
+  # def get_test_client() do
+  #   get_client(Application.get_env(:soul_gut, :facebook_client_id),
   #             Application.get_env(:soul_gut, :facebook_client_secret),
   #             Application.get_env(:soul_gut, :facebook_test_access_token))
 	# end
 
-  def streamEndpoint(endpoint) do
+  def stream_endpoint(endpoint) do
     Stream.resource(
       fn -> endpoint end,
       fn(cursor) ->
@@ -45,7 +45,7 @@ defmodule Sources.Facebook do
     )
   end
 
-  def getEndpoint(endpoint) do
+  def get_endpoint(endpoint) do
     case Client.get(Fb.client, "/" <> Enum.join(endpoint, "/")) do
       {:ok, %OAuth2.Response{status_code: _status_code, body: body}} ->
         body["data"]
@@ -61,10 +61,10 @@ defmodule Sources.Facebook do
   we tag it with `:after`.  If the time is before we played any song, we produce
   nil.
   """
-  def getSongAtTime(t) do
+  def get_song_at_time(t) do
     maybe_song =
-      streamEndpoint("/me/music.listens")
-      |> Stream.filter(&isSong?(&1, t))
+      stream_endpoint("/me/music.listens")
+      |> Stream.filter(&is_song?(&1, t))
       |> Enum.take(1)
     case maybe_song do
       nil -> nil
@@ -72,16 +72,16 @@ defmodule Sources.Facebook do
         ending = Timex.parse!(song["end_time"], "{ISO:Extended}")
         {if(Timex.before?(ending, t), do: :after, else: :during),
             song["data"]["song"]["title"],
-            getPlaylist(song["data"])}
+            get_playlist(song["data"])}
     end
   end
 
-  defp isSong?(song, t) do
+  defp is_song?(song, t) do
     starting = Timex.parse!(song["start_time"], "{ISO:Extended}")
     Timex.before?(starting, t)
   end
 
-  defp getPlaylist(data) do
+  defp get_playlist(data) do
     Logger.debug(inspect(data))
     if Map.has_key?(data, "playlist") do
       data["playlist"]["title"]

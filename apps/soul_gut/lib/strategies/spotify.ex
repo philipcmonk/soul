@@ -18,7 +18,7 @@ defmodule Strategies.Spotify do
     ])
   end
 
-  def hasClient?() do
+  def has_client?() do
     false
   end
 

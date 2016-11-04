@@ -1,7 +1,7 @@
 defmodule Sources.Spotify do
   alias OAuth2.Client
 
-  def hasClient?() do
+  def has_client?() do
     false
   end
 end

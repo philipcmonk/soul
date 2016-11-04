@@ -14,7 +14,7 @@ defmodule SoulWeb.ApiController do
   end
 
   def music(conn, _params) do
-    s = Sources.Facebook.streamEndpoint("/me/music.listens")
+    s = Sources.Facebook.stream_endpoint("/me/music.listens")
     Logger.debug("music1 " <> inspect(s))
     json conn, Enum.take(s, 5)
   end
@@ -22,14 +22,14 @@ defmodule SoulWeb.ApiController do
   def music_at(conn, %{"time" => time}) do
     t = Timex.parse!(time, "{ISO:Extended}")
     {during, song, playlist} =
-      Sources.Facebook.getSongAtTime(t)
+      Sources.Facebook.get_song_at_time(t)
     json conn, %{when: during, song: song, playlist: playlist}
   end
 
   def services(conn, _params) do
     json conn,
       @services
-      |> Enum.map(fn {service, module} -> {service, module.hasClient?} end)
+      |> Enum.map(fn {service, module} -> {service, module.has_client?} end)
       |> Map.new
   end
 
@@ -37,7 +37,7 @@ defmodule SoulWeb.ApiController do
     unless Map.has_key?(@services, service) do
       %{ok: false, error: "service not recognized"}
     else
-      case @services[service].takeCode(code) do
+      case @services[service].take_code(code) do
         {:ok, _}         -> %{ok: true}
         {:error, reason} -> %{ok: false, error: reason}
       end
@@ -55,6 +55,6 @@ defmodule SoulWeb.ApiController do
   end
 
   def facebook(conn, %{"endpoint" => endpoint}) do
-    json conn, Sources.Facebook.getEndpoint(endpoint)
+    json conn, Sources.Facebook.get_endpoint(endpoint)
   end
 end

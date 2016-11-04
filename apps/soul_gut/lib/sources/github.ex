@@ -1,7 +1,7 @@
 defmodule Sources.Github do
   alias OAuth2.Client
 
-  def hasClient?() do
+  def has_client?() do
     false
   end
 end
