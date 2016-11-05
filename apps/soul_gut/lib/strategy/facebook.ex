@@ -1,7 +1,7 @@
 require Logger
 
-defmodule Strategies.Facebook do
-  @behaviour Strategies
+defmodule Strategy.Facebook do
+  @behaviour Strategy
   use OAuth2.Strategy
 
   @service "facebook"
@@ -27,12 +27,12 @@ defmodule Strategies.Facebook do
     "pages_messaging_phone_number"
 
 
-  def client, do: Strategies.client(@service, @bare_client)
-  def has_client?, do: @service |> Strategies.has_client?
-  def del_client, do: @service |> Strategies.del_client
-  def set_client(client), do: @service |> Strategies.set_client(client)
+  def client, do: Strategy.client(@service, @bare_client)
+  def has_client?, do: @service |> Strategy.has_client?
+  def del_client, do: @service |> Strategy.del_client
+  def set_client(client), do: @service |> Strategy.set_client(client)
   def set_client(id, secret, token) do
-    @service |> Strategies.set_client(id, secret, token)
+    @service |> Strategy.set_client(id, secret, token)
   end
 
   def set_test_client() do

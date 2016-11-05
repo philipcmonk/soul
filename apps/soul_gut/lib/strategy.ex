@@ -2,7 +2,7 @@ require Logger
 import Ecto.Query, only: [from: 2]
 alias SoulGut.{Repo,Service}
 
-defmodule Strategies do
+defmodule Strategy do
   @callback authorize_url! :: String.t
   @callback take_code(String.t) :: {:ok, any} | {:error, any}
   @callback client :: %OAuth2.Client{}

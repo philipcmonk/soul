@@ -4,9 +4,9 @@ defmodule SoulWeb.ApiController do
   use SoulWeb.Web, :controller
 
 
-  @services %{"facebook" => Strategies.Facebook,
-              "spotify"  => Strategies.Spotify,
-              "github"   => Strategies.Github
+  @services %{"facebook" => Strategy.Facebook,
+              "spotify"  => Strategy.Spotify,
+              "github"   => Strategy.Github
             }
 
   def index(conn, _params) do

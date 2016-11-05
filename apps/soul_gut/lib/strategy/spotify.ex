@@ -1,5 +1,5 @@
-defmodule Strategies.Spotify do
-  @behaviour Strategies
+defmodule Strategy.Spotify do
+  @behaviour Strategy
   use OAuth2.Strategy
 
   @service "spotify"
@@ -15,12 +15,12 @@ defmodule Strategies.Spotify do
     "user-follow-read user-library-read user-library-modify " <>
     "user-read-private user-read-birthdate user-read-email user-top-read"
 
-  def client, do: Strategies.client(@service, @bare_client)
-  def has_client?, do: @service |> Strategies.has_client?
-  def del_client, do: @service |> Strategies.del_client
-  def set_client(client), do: @service |> Strategies.set_client(client)
+  def client, do: Strategy.client(@service, @bare_client)
+  def has_client?, do: @service |> Strategy.has_client?
+  def del_client, do: @service |> Strategy.del_client
+  def set_client(client), do: @service |> Strategy.set_client(client)
   def set_client(id, secret, token) do
-    @service |> Strategies.set_client(id, secret, token)
+    @service |> Strategy.set_client(id, secret, token)
   end
 
   def authorize_url! do

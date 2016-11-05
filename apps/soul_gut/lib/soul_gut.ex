@@ -19,9 +19,9 @@ defmodule SoulGut do
   end
 
   def get_github_username() do
-    IO.puts "go to this url:  " <> Strategies.Github.authorize_url!
+    IO.puts "go to this url:  " <> Strategy.Github.authorize_url!
     code = String.strip(IO.gets "code: ")
-    client = Strategies.Github.get_token!(code: code)
+    client = Strategy.Github.get_token!(code: code)
     case OAuth2.Client.get(client, "/user") do
       {:ok, %OAuth2.Response{status_code: 401, body: _}} ->
         Logger.error("Unauthorized token")
@@ -33,9 +33,9 @@ defmodule SoulGut do
   end
 
   def get_spotify_name() do
-    IO.puts "go to this url:  " <> Strategies.Spotify.authorize_url!
+    IO.puts "go to this url:  " <> Strategy.Spotify.authorize_url!
     code = String.strip(IO.gets "code: ")
-    client = Strategies.Spotify.get_token!(code: code)
+    client = Strategy.Spotify.get_token!(code: code)
     case OAuth2.Client.get(client, "/me") do
       {:ok, %OAuth2.Response{status_code: 401, body: _}} ->
         Logger.error("Unauthorized token")
@@ -47,9 +47,9 @@ defmodule SoulGut do
   end
 
   def get_facebook_name() do
-    IO.puts "go to this url:  " <> Strategies.Facebook.authorize_url!
+    IO.puts "go to this url:  " <> Strategy.Facebook.authorize_url!
     code = String.strip(IO.gets "code: ")
-    client = Strategies.Facebook.get_token!(code: code)
+    client = Strategy.Facebook.get_token!(code: code)
     case OAuth2.Client.get(client, "/me") do
       {:ok, %OAuth2.Response{status_code: 401, body: _}} ->
         Logger.error("Unauthorized token")
@@ -61,9 +61,9 @@ defmodule SoulGut do
   end
 
   def start_facebook() do
-    IO.puts "go to this url:  " <> Strategies.Facebook.authorize_url!
+    IO.puts "go to this url:  " <> Strategy.Facebook.authorize_url!
     code = String.strip(IO.gets "code: ")
-    client = Strategies.Facebook.get_token!(code: code)
+    client = Strategy.Facebook.get_token!(code: code)
     if !client.token.access_token do
       raise client
     else

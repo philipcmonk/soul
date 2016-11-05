@@ -1,5 +1,5 @@
 require Logger
-alias Strategies.Facebook, as: Fb
+alias Strategy.Facebook, as: Fb
 
 defmodule Sources.Facebook do
   alias OAuth2.Client
