@@ -3,20 +3,32 @@ import Ecto.Query, only: [from: 2]
 alias SoulGut.{Repo,Service}
 
 defmodule Strategies do
+  @callback authorize_url! :: String.t
+  @callback take_code(String.t) :: {:ok, any} | {:error, any}
+  @callback client :: %OAuth2.Client{}
+  @callback has_client? :: false | integer
+  @callback del_client :: {:ok, struct} | {:error, any}
+  @callback set_client(%OAuth2.Client{}) :: {:ok, any} | {:error, any}
+  @callback set_client(String.t, String.t, String.t) ::
+    {:ok, any} | {:error, any}
+
   def client(service, bare_client) do
     query = from s in Service,
       where: s.name == ^service,
       select: {s.client_id, s.client_secret, s.access_token}
 
-    {id, secret, token} = Repo.one!(query)
+    case Repo.one(query) do
+      nil -> bare_client
+      {id, secret, token} ->
+        %OAuth2.Client{bare_client |
+          client_id: id,
+          client_secret: secret,
+          token: %OAuth2.AccessToken{
+            access_token: token,
+            expires_at: 1482823240
+        }}
+    end
 
-    %OAuth2.Client{bare_client |
-      client_id: id,
-      client_secret: secret,
-      token: %OAuth2.AccessToken{
-        access_token: token,
-        expires_at: 1482823240
-      }}
   end
 
   def has_client?(service) do
@@ -72,9 +84,7 @@ defmodule Strategies do
     from(s in Service, where: s.name == ^service)
     case has_client?(service) do
       false -> {:error, "no client"}
-      key -> Repo.delete!(%Service{id: key})
+      key -> Repo.delete(%Service{id: key})
     end
   end
-
-
 end

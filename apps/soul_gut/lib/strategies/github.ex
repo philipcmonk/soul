@@ -1,27 +1,35 @@
 defmodule Strategies.Github do
+  @behaviour Strategies
   use OAuth2.Strategy
 
-  def client do
-    OAuth2.Client.new([
-      strategy: __MODULE__,
-      client_id: Application.get_env(:soul_gut, :github_client_id),
-      client_secret: Application.get_env(:soul_gut, :github_client_secret),
-      redirect_uri: Application.get_env(:soul_gut, :authorize_redirect_uri),
-      site: "https://api.github.com",
-      authorize_url: "https://github.com/login/oauth/authorize",
-      token_url: "https://github.com/login/oauth/access_token"
-    ])
-  end
+  @service "github"
+  @bare_client %OAuth2.Client{
+                 strategy: __MODULE__,
+                 authorize_url: "/login/oauth/authorize",
+                 redirect_uri: "http://dev.pcmonk.me:4000/",
+                 site: "https://api.github.com",
+                 token_url: "/login/oauth/access_token"
+               }
+  @default_scopes "user,public_repo"
 
-  def has_client?() do
-    false
+  def client, do: Strategies.client(@service, @bare_client)
+  def has_client?, do: @service |> Strategies.has_client?
+  def del_client, do: @service |> Strategies.del_client
+  def set_client(client), do: @service |> Strategies.set_client(client)
+  def set_client(id, secret, token) do
+    @service |> Strategies.set_client(id, secret, token)
   end
 
   def authorize_url! do
-    OAuth2.Client.authorize_url!(client(), scope: "user,public_repo")
+    OAuth2.Client.authorize_url!(client(), scope: @default_scopes)
   end
 
-  # you can pass options to the underlying http library via `opts` parameter
+  def take_code(code) do
+    [code: code]
+    |> __MODULE__.get_token!
+    |> set_client
+  end
+
   def get_token!(params \\ [], headers \\ [], opts \\ []) do
     OAuth2.Client.get_token!(client(), params, headers, opts)
   end

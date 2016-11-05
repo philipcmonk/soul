@@ -1,14 +1,15 @@
 require Logger
 
 defmodule Strategies.Facebook do
+  @behaviour Strategies
   use OAuth2.Strategy
 
   @service "facebook"
   @bare_client %OAuth2.Client{
+                 strategy: __MODULE__,
                  authorize_url: "/dialog/oauth",
                  redirect_uri: "http://dev.pcmonk.me:4000/",
                  site: "https://graph.facebook.com/v2.8",
-                 strategy: Strategies.Facebook,
                  token_url: "/oauth/access_token"
                }
   @default_scopes "public_profile,user_friends,email,user_about_me," <>
@@ -27,17 +28,11 @@ defmodule Strategies.Facebook do
 
 
   def client, do: Strategies.client(@service, @bare_client)
-  def has_client, do: @service |> Strategies.has_client?
+  def has_client?, do: @service |> Strategies.has_client?
   def del_client, do: @service |> Strategies.del_client
   def set_client(client), do: @service |> Strategies.set_client(client)
   def set_client(id, secret, token) do
     @service |> Strategies.set_client(id, secret, token)
-  end
-
-  def take_code(code) do
-    [code: code]
-    |> Strategies.Facebook.get_token!
-    |> set_client
   end
 
   def set_test_client() do
@@ -46,15 +41,21 @@ defmodule Strategies.Facebook do
       Application.get_env(:soul_gut, :facebook_test_access_token))
   end
 
-
-  # These are the ones you need!
   def authorize_url! do
     OAuth2.Client.authorize_url!(client(), scope: @default_scopes)
+  end
+
+  def take_code(code) do
+    [code: code]
+    |> __MODULE__.get_token!
+    |> set_client
   end
 
   def get_token!(params \\ [], headers \\ [], opts \\ []) do
     OAuth2.Client.get_token!(client(), params, headers, opts)
   end
+
+  # Strategy Callbacks
 
   def authorize_url(client, params) do
     OAuth2.Strategy.AuthCode.authorize_url(client, params)
