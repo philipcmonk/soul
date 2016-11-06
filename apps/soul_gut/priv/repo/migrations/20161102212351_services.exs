@@ -7,9 +7,9 @@ defmodule SoulGut.Repo.Migrations.Services do
       add :name,          :string, unique: true
       add :client_id,     :string
       add :client_secret, :string
-      add :access_token,  :string
+      add :access_token,  :text
       add :expires_at,    :datetime
-      add :refresh_token, :string
+      add :refresh_token, :text
 
       timestamps
     end

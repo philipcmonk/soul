@@ -7,8 +7,9 @@ defmodule Strategy.Facebook do
   @service "facebook"
   @bare_client %OAuth2.Client{
                  strategy: __MODULE__,
-                 authorize_url: "/dialog/oauth",
-                 redirect_uri: "http://dev.pcmonk.me:4000/",
+                 authorize_url: "https://www.facebook.com/v2.8/dialog/oauth",
+                 redirect_uri: "http://localhost:4000/api/services/" <>
+                   @service <> "/auth",
                  site: "https://graph.facebook.com/v2.8",
                  token_url: "/oauth/access_token"
                }
@@ -31,7 +32,7 @@ defmodule Strategy.Facebook do
   def has_client?, do: @service |> Strategy.has_client?
   def del_client, do: @service |> Strategy.del_client
   def set_client(client), do: @service |> Strategy.set_client(client)
-  def set_client(id, secret, token) do
+  def set_client(id, secret, token \\ nil) do
     @service |> Strategy.set_client(id, secret, token)
   end
 

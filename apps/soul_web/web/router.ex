@@ -3,10 +3,10 @@ defmodule SoulWeb.Router do
 
   pipeline :browser do
     plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_flash
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    # plug :fetch_session
+    # plug :fetch_flash
+    # plug :protect_from_forgery
+    # plug :put_secure_browser_headers
   end
 
   pipeline :api do
@@ -17,6 +17,7 @@ defmodule SoulWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/auth/:service", ApiController, :auth_redirect
   end
 
   # Other scopes may use custom stacks.
@@ -27,6 +28,7 @@ defmodule SoulWeb.Router do
     get "/services", ApiController, :services
     get "/services/:service/auth", ApiController, :auth
     get "/services/:service/auth_url", ApiController, :auth_url
+    put "/services/:service/app", ApiController, :app
     get "/facebook/*endpoint", ApiController, :facebook
     get "/music", ApiController, :music
     get "/music/:time", ApiController, :music_at

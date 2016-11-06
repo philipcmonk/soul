@@ -9,7 +9,7 @@ defmodule Strategy do
   @callback has_client? :: false | integer
   @callback del_client :: {:ok, struct} | {:error, any}
   @callback set_client(%OAuth2.Client{}) :: {:ok, any} | {:error, any}
-  @callback set_client(String.t, String.t, String.t) ::
+  @callback set_client(String.t, String.t, String.t | nil) ::
     {:ok, any} | {:error, any}
 
   def client(service, bare_client) do
@@ -17,8 +17,15 @@ defmodule Strategy do
       where: s.name == ^service,
       select: {s.client_id, s.client_secret, s.access_token}
 
+    
     case Repo.one(query) do
       nil -> bare_client
+      {id, secret, nil} ->
+        %OAuth2.Client{bare_client |
+          client_id: id,
+          client_secret: secret,
+          token: nil
+        }
       {id, secret, token} ->
         %OAuth2.Client{bare_client |
           client_id: id,
@@ -29,6 +36,17 @@ defmodule Strategy do
         }}
     end
 
+  end
+
+  def has_entry?(service) do
+    query = from s in Service,
+      where: s.name == ^service,
+      select: s.id
+
+    case Repo.one(query) do
+      nil -> false # either no service row or access token doesn't exist
+      id -> id
+    end
   end
 
   def has_client?(service) do
@@ -48,7 +66,7 @@ defmodule Strategy do
   end
 
   def set_client(service, id, secret, token) do
-    case has_client?(service) do
+    case has_entry?(service) do
       false ->
         changeset = Service.changeset(%Service{},
           %{name: service,
@@ -65,8 +83,7 @@ defmodule Strategy do
 
       key ->
         changeset = Service.update_changeset(%Service{id: key},
-          %{name: service,
-            client_id: id,
+          %{client_id: id,
             client_secret: secret,
             access_token: token
           })

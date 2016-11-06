@@ -5,10 +5,11 @@ defmodule Strategy.Github do
   @service "github"
   @bare_client %OAuth2.Client{
                  strategy: __MODULE__,
-                 authorize_url: "/login/oauth/authorize",
-                 redirect_uri: "http://dev.pcmonk.me:4000/",
+                 authorize_url: "https://github.com/login/oauth/authorize",
+                 redirect_uri: "http://localhost:4000/api/services/" <>
+                   @service <> "/auth",
                  site: "https://api.github.com",
-                 token_url: "/login/oauth/access_token"
+                 token_url: "https://github.com/login/oauth/access_token"
                }
   @default_scopes "user,public_repo"
 
@@ -16,7 +17,7 @@ defmodule Strategy.Github do
   def has_client?, do: @service |> Strategy.has_client?
   def del_client, do: @service |> Strategy.del_client
   def set_client(client), do: @service |> Strategy.set_client(client)
-  def set_client(id, secret, token) do
+  def set_client(id, secret, token \\ nil) do
     @service |> Strategy.set_client(id, secret, token)
   end
 

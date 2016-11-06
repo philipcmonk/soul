@@ -54,6 +54,24 @@ defmodule SoulWeb.ApiController do
     |> (&json(conn, &1)).()
   end
 
+  def auth_redirect(conn, %{"service" => service}) do
+    unless Map.has_key?(@services, service) do
+      json conn, %{ok: false, error: "service not recognized"}
+    else
+      redirect conn, external: @services[service].authorize_url!
+    end
+  end
+
+  def app(conn, %{"service" => service,
+                  "client_id" => id,
+                  "client_secret" => secret}) do
+    case @services[service].set_client(id, secret) do
+      {:ok, _} -> %{ok: true}
+      {:error, any} -> %{ok: false, error: inspect(any)}
+    end
+    |> (&json(conn, &1)).()
+  end
+
   def facebook(conn, %{"endpoint" => endpoint}) do
     json conn, Sources.Facebook.get_endpoint(endpoint)
   end
