@@ -43,7 +43,8 @@ defmodule SoulWeb.Mixfile do
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
      {:soul_gut, in_umbrella: true},
-     {:timex, "~> 3.0"}
+     {:timex, "~> 3.0"},
+     {:cors_plug, "~> 1.1"}
    ]
   end
 

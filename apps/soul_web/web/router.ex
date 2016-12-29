@@ -11,6 +11,7 @@ defmodule SoulWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug CORSPlug, origin: ~r/https?:\/\/localhost:[0-9]{4}$/
   end
 
   scope "/", SoulWeb do
