@@ -5,6 +5,7 @@ defmodule SoulGut.Service do
 
   schema "services" do
     field :name,          :string, unique: true
+    field :enabled,       :boolean, default: false
     field :client_id,     :string
     field :client_secret, :string
     field :access_token,  :string
@@ -15,7 +16,7 @@ defmodule SoulGut.Service do
   end
 
   @required_fields ~w(name)
-  @optional_fields ~w(client_id client_secret access_token expires_at refresh_token)
+  @optional_fields ~w(enabled client_id client_secret access_token expires_at refresh_token)
 
   def changeset(service, params \\ :empty) do
     service

@@ -113,12 +113,12 @@ defmodule Strategy do
   def get_settings(service) do
     query = from s in Service,
       where: s.name == ^service,
-      select: {s.id, s.client_id, s.client_secret, s.access_token}
+      select: {s.id, s.enabled, s.client_id, s.client_secret, s.access_token}
 
     case Repo.one(query) do
       nil -> %Strategy{name: service}
-      {id, client_id, secret, token} ->
-        %Strategy{name: service, id: id, enabled: false,
+      {id, enabled?, client_id, secret, token} ->
+        %Strategy{name: service, id: id, enabled: enabled?,
           client_id: client_id, client_secret: secret, access_token: token}
     end
   end
