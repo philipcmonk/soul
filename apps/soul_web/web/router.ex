@@ -30,6 +30,7 @@ defmodule SoulWeb.Router do
     get "/services/:service/auth_url", ApiController, :auth_url
     put "/services/:service/app", ApiController, :app
     get "/facebook/*endpoint", ApiController, :facebook
+    get "/foursquare/*endpoint", ApiController, :foursquare
     get "/music", ApiController, :music
     get "/music/:time", ApiController, :music_at
   end

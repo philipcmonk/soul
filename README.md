@@ -19,9 +19,11 @@ services and whether or not you have credentials for them (you
 shouldn't).
 
 Choose a service, we'll use Facebook as an example.  Give your
-app id and secret by posting `{"client_id": "XXX",
+app id and secret by putting `{"client_id": "XXX",
 "client_secret": "XXX"}` to
 `http://localhost:4000/api/services/facebook/app`.
+
+    curl -X PUT -H 'Content-Type: application/json' -d '{"client_id": "XXX", "client_secret": "XXX"}' http://localhost:4000/api/services/facebook/app
 
 Then, visit `http://localhost:4000/auth/facebook` to
 authenticate.  Then you should be able to visit

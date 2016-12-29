@@ -4,9 +4,10 @@ defmodule SoulWeb.ApiController do
   use SoulWeb.Web, :controller
 
 
-  @services %{"facebook" => Strategy.Facebook,
-              "spotify"  => Strategy.Spotify,
-              "github"   => Strategy.Github
+  @services %{"facebook"    => Strategy.Facebook,
+              "spotify"     => Strategy.Spotify,
+              "github"      => Strategy.Github,
+              "foursquare"  => Strategy.Foursquare
             }
 
   def index(conn, _params) do
@@ -75,5 +76,9 @@ defmodule SoulWeb.ApiController do
 
   def facebook(conn, %{"endpoint" => endpoint}) do
     json conn, Sources.Facebook.get_endpoint(endpoint)
+  end
+
+  def foursquare(conn, %{"endpoint" => endpoint}) do
+    json conn, Sources.Foursquare.get_endpoint(endpoint)
   end
 end
