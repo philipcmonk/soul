@@ -20,6 +20,7 @@ defmodule Strategy.Github do
   def set_client(id, secret, token \\ nil) do
     @service |> Strategy.set_client(id, secret, token)
   end
+  def get_settings, do: @service |> Strategy.get_settings
 
   def authorize_url! do
     OAuth2.Client.authorize_url!(client(), scope: @default_scopes)

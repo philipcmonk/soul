@@ -35,6 +35,7 @@ defmodule Strategy.Facebook do
   def set_client(id, secret, token \\ nil) do
     @service |> Strategy.set_client(id, secret, token)
   end
+  def get_settings, do: @service |> Strategy.get_settings
 
   def set_test_client() do
     set_client(Application.get_env(:soul_gut, :facebook_client_id),

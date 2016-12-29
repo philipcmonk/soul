@@ -29,8 +29,9 @@ defmodule SoulWeb.ApiController do
   def services(conn, _params) do
     json conn,
       @services
-      |> Enum.map(fn {service, module} -> {service, module.has_client?} end)
-      |> Map.new
+      |> Enum.map(fn {_service, module} -> module.get_settings end)
+      # |> Enum.map(fn {service, module} -> {service, module.has_client?} end)
+      # |> Map.new
   end
 
   def auth(conn, %{"service" => service, "code" => code}) do

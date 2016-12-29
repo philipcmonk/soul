@@ -3,6 +3,9 @@ import Ecto.Query, only: [from: 2]
 alias SoulGut.{Repo,Service}
 
 defmodule Strategy do
+  defstruct name: "service", id: 1337, enabled: false,
+            client_id: "", client_secret: "", access_token: false
+
   @callback authorize_url! :: String.t
   @callback take_code(String.t) :: {:ok, any} | {:error, any}
   @callback client :: %OAuth2.Client{}
@@ -11,6 +14,8 @@ defmodule Strategy do
   @callback set_client(%OAuth2.Client{}) :: {:ok, any} | {:error, any}
   @callback set_client(String.t, String.t, String.t | nil) ::
     {:ok, any} | {:error, any}
+  @callback get_settings :: %Strategy{}
+
 
   def client(service, bare_client) do
     query = from s in Service,
@@ -102,6 +107,19 @@ defmodule Strategy do
     case has_client?(service) do
       false -> {:error, "no client"}
       key -> Repo.delete(%Service{id: key})
+    end
+  end
+
+  def get_settings(service) do
+    query = from s in Service,
+      where: s.name == ^service,
+      select: {s.id, s.client_id, s.client_secret, s.access_token}
+
+    case Repo.one(query) do
+      nil -> %Strategy{name: service}
+      {id, client_id, secret, token} ->
+        %Strategy{name: service, id: id, enabled: false,
+          client_id: client_id, client_secret: secret, access_token: token}
     end
   end
 end
