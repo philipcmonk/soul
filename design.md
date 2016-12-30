@@ -10,6 +10,7 @@ For the examples we will use a Schema of the following:
 Schema Event {
   id: String 'uuid()'
   dateCreated: String 'Date'
+  dateRecorded: String 'Date' // date from the source
   name: String ''
   images: Array []
   location: Map Location
