@@ -5,6 +5,7 @@ defmodule SoulGut.Events do
 
   schema "events" do
     field :name,          :string
+    field :service,       :string
     field :orig_id,       :string
     field :images,        {:array, :string}
     field :date_recorded, Timex.Ecto.DateTime
@@ -13,7 +14,7 @@ defmodule SoulGut.Events do
     timestamps
   end
 
-  @required_fields ~w(name orig_id location)
+  @required_fields ~w(name orig_id service location)
   @optional_fields ~w(images date_recorded)
 
   def changeset(service, params \\ %{}) do

@@ -27,11 +27,12 @@ defmodule Sources.Foursquare do
       Logger.debug("item " <> inspect(item["id"]))
       %{orig_id: item["id"],
         name: item["venue"]["name"],
+        service: "swarm",
         images: [],
         date_recorded: DateTime.from_unix!(item["createdAt"]),
         location: 0 # XXX
       } end)
-   
+
     |> Enum.reject(fn event ->
       Repo.one(from s in Events,
         where: s.orig_id == ^event[:orig_id],
@@ -42,7 +43,7 @@ defmodule Sources.Foursquare do
 
     |> Enum.map(fn changeset ->
       case Repo.insert(changeset) do
-        {:ok, _model} -> 
+        {:ok, _model} ->
           Logger.debug("added new event. " <> inspect(changeset))
           :ok
         {:error, changeset} ->

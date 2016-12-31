@@ -5,6 +5,7 @@ defmodule SoulGut.Repo.Migrations.Events do
   def change do
     create table(:events) do
       add :name,          :text
+      add :service,       :text
       add :orig_id,       :text
       add :images,        {:array, :text}
       add :date_recorded, :datetime
