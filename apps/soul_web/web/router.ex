@@ -34,5 +34,6 @@ defmodule SoulWeb.Router do
     get "/foursquare/*endpoint", ApiController, :foursquare
     get "/music", ApiController, :music
     get "/music/:time", ApiController, :music_at
+    get "/events", ApiController, :events
   end
 end

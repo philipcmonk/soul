@@ -81,4 +81,8 @@ defmodule SoulWeb.ApiController do
   def foursquare(conn, %{"endpoint" => endpoint}) do
     json conn, Sources.Foursquare.get_endpoint(endpoint)
   end
+
+  def events(conn, _params) do
+    json conn, Sources.Events.get_events
+  end
 end

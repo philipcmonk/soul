@@ -63,4 +63,3 @@ GET /<resource>/locations
   }
 ]
 ```
-
